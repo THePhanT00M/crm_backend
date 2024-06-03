@@ -17,6 +17,6 @@ public class Hello {
     // hello 메소드의 응답 결과 반환
     @ResponseBody
     public String hello() {
-        return "Hello World! !@";
+        return "Hello World! !@!";
     }
 }
