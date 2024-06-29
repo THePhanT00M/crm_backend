@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    image: shcrm_java
+    expose:
+      - "8080"
+    container_name: shcrm_backend
+    network_mode: bridge
+    environment:
+      - VIRTUAL_HOST=dev-shcrm.site
