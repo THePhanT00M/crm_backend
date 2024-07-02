@@ -11,11 +11,12 @@ import lombok.Setter;
 public class UserEntity {
 
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int No;
 
-    private String name;
+    @Column(unique = true)
+    private String id;
     private String password;
-    private String department;
-    private String email;
+
     private String role;
 }
