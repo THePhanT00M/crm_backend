@@ -11,11 +11,10 @@ import lombok.Setter;
 public class UserEntity {
 
     @Id
-    private int id;
-
-    private String name;
-    private String password;
-    private String department;
+    private String id;
     private String email;
+    private String department;
+    private String password;
+
     private String role;
 }
