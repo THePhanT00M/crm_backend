@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>title(||쓰지 않은 경우)</th>
+        <th>writer</th>
+        <th>date</th>
+        <th>hits</th>
+    </tr>
+    <tr th:each="report: ${reportlist}">
+        <td th:text="${report.id}"></td>
+        <td><a th:href="@{|/report/${report.id}|}" th:text="${report.reportTitle}"></a></td>
+        <td><a th:href="@{/report/${report.id}}" th:text="${report.reportTitle}"></a></td>
+        <td th:text="${report.reportWriter}"></td>
+        <td th:text="*{#temporals.format(report.reportCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${report.reportHits}"></td>
+    </tr>
+</table>
+</body>
+</html>

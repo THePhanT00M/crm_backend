@@ -6,6 +6,9 @@ import site.shcrm.shcrm_backend.DTO.ReportDTO;
 import site.shcrm.shcrm_backend.Entity.ReportEntity;
 import site.shcrm.shcrm_backend.repository.ReportRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -14,5 +17,14 @@ public class ReportService {
         ReportEntity reportEntity = ReportEntity.toSaveEntity(reportDTO);
         reportRepository.save(reportEntity);
 
+    }
+
+    public List<ReportDTO> findAll() {
+        List<ReportEntity> reportEntityList = reportRepository.findAll();
+        List<ReportDTO> reportDTOList = new ArrayList<>();
+        for (ReportEntity reportEntity: reportEntityList){
+            reportDTOList.add(ReportDTO.toreportDTO(reportEntity));
+        }
+        return reportDTOList;
     }
 }

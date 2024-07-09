@@ -1,9 +1,6 @@
 package site.shcrm.shcrm_backend.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import site.shcrm.shcrm_backend.DTO.ReportDTO;
@@ -17,32 +14,33 @@ import java.time.LocalDateTime;
 public class ReportEntity extends TimeEntity{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
 
     @Column
     private String id;
 
     @Column(length = 20, nullable = false)
-    private String boardWriter;
+    private String reportWriter;
 
     @Column
-    private String boardTitle;
+    private String reportTitle;
 
     @Column(length = 50)
-    private String boardContents;
+    private String reportContents;
     @Column
-    private int boardHits;
+    private int reportHits;
     @Column
-    private LocalDateTime boardCreatedTime;
+    private LocalDateTime reportCreatedTime;
     @Column
-    private LocalDateTime boardUpdatedTime;
+    private LocalDateTime reportUpdatedTime;
 
     public static ReportEntity toSaveEntity(ReportDTO reportDTO){
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setBoardWriter(reportDTO.getBoardWriter());
-        reportEntity.setBoardTitle(reportDTO.getBoardWriter());
-        reportEntity.setBoardContents(reportEntity.getBoardContents());
-        reportEntity.setBoardHits(0);
+        reportEntity.setReportWriter(reportDTO.getReportWriter());
+        reportEntity.setReportTitle(reportDTO.getReportTitle());
+        reportEntity.setReportContents(reportDTO.getReportContents());
+        reportEntity.setReportHits(0);
         return reportEntity;
     }
 }
