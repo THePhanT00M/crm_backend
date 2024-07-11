@@ -29,8 +29,8 @@ public class ReportDTO {
         reportDTO.setReportWriter(reportEntity.getReportWriter());
         reportDTO.setReportTitle(reportEntity.getReportTitle());
         reportDTO.setReportContents(reportEntity.getReportContents());
-        reportDTO.setReportUpdatedTime(reportEntity.getReportUpdatedTime());
-        reportDTO.setReportCreatedTime(reportEntity.getReportCreatedTime());
+        reportDTO.setReportUpdatedTime(reportEntity.getUpdatedTime());
+        reportDTO.setReportCreatedTime(reportEntity.getCreatedTime());
         reportDTO.setReportHits(reportEntity.getReportHits());
         return reportDTO;
     }

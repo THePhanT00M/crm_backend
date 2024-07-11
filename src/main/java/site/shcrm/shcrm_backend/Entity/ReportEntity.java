@@ -30,10 +30,7 @@ public class ReportEntity extends TimeEntity{
     private String reportContents;
     @Column
     private int reportHits;
-    @Column
-    private LocalDateTime reportCreatedTime;
-    @Column
-    private LocalDateTime reportUpdatedTime;
+
 
     public static ReportEntity toSaveEntity(ReportDTO reportDTO){
         ReportEntity reportEntity = new ReportEntity();

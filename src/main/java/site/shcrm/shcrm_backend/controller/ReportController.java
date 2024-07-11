@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import site.shcrm.shcrm_backend.DTO.ReportDTO;
 import site.shcrm.shcrm_backend.Service.ReportService;
-import site.shcrm.shcrm_backend.repository.ReportRepository;
 
 import java.util.List;
 
@@ -36,5 +35,12 @@ public class ReportController {
         List<ReportDTO> reportDTOList = reportService.findAll();
         model.addAttribute("reportlist",reportDTOList);
         return "ReportList";
+    }
+    @GetMapping("/reportdetail/{no}")
+    public String findById(@PathVariable Long no,Model model){
+        reportService.updateHits(no);
+        ReportDTO reportDTO = reportService.findById(no);
+        model.addAttribute("report",reportDTO);
+        return "ReportDetail";
     }
 }
