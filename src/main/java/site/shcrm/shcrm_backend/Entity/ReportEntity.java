@@ -6,6 +6,8 @@ import lombok.Setter;
 import site.shcrm.shcrm_backend.DTO.ReportDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -26,10 +28,17 @@ public class ReportEntity extends TimeEntity{
     @Column
     private String reportTitle;
 
-    @Column(length = 50)
+    @Column(length = 500)
     private String reportContents;
+
     @Column
     private int reportHits;
+
+    @Column
+    private int fileAttached;
+
+    @OneToMany(mappedBy = "reportEntity", cascade = CascadeType.REMOVE, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ReportFileEntity> reportFileEntityList = new ArrayList<>();
 
 
     public static ReportEntity toSaveEntity(ReportDTO reportDTO){
@@ -38,6 +47,27 @@ public class ReportEntity extends TimeEntity{
         reportEntity.setReportTitle(reportDTO.getReportTitle());
         reportEntity.setReportContents(reportDTO.getReportContents());
         reportEntity.setReportHits(0);
+        reportEntity.setFileAttached(0);
+        return reportEntity;
+    }
+
+    public static ReportEntity toUpdateEntity(ReportDTO reportDTO) {
+        ReportEntity reportEntity = new ReportEntity();
+        reportEntity.setNo(reportDTO.getNo());
+        reportEntity.setReportWriter(reportDTO.getReportWriter());
+        reportEntity.setReportTitle(reportDTO.getReportTitle());
+        reportEntity.setReportContents(reportDTO.getReportContents());
+        reportEntity.setReportHits(reportDTO.getReportHits());
+        return reportEntity;
+    }
+
+    public static ReportEntity toSaveFileEntity(ReportDTO reportDTO) {
+        ReportEntity reportEntity = new ReportEntity();
+        reportEntity.setReportWriter(reportDTO.getReportWriter());
+        reportEntity.setReportTitle(reportDTO.getReportTitle());
+        reportEntity.setReportContents(reportDTO.getReportContents());
+        reportEntity.setReportHits(0);
+        reportEntity.setFileAttached(1);
         return reportEntity;
     }
 }

@@ -9,7 +9,7 @@
 <body>
 <table>
     <tr>
-        <th>id</th>
+        <th>no</th>
         <td th:text="${report.no}"></td>
     </tr>
     <tr>
@@ -32,6 +32,11 @@
         <th>contents</th>
         <td th:text="${report.reportContents}"></td>
     </tr>
+    <tr th:if="${report.fileAttached == 1}">
+        <th>image</th>
+        <td th:each="fileName : ${report.storedFileName}">
+            <img th:src="@{|/upload/${fileName}|}" alt=""></td>
+    </tr>
 </table>
 <button onclick="listReq()">목록</button>
 <button onclick="updateReq()">수정</button>
@@ -46,12 +51,12 @@
     const updateReq = () => {
         console.log("수정 요청");
         const no = [[${report.no}]];
-        location.href = "/report/update/" + no;
+        location.href = "/reportupdate/" + no;
     }
     const deleteReq = () => {
         console.log("삭제 요청");
         const no = [[${report.no}]];
-        location.href = "/report/delete/" + no;
+        location.href = "/reportdelete/" + no;
     }
 </script>
 </body>

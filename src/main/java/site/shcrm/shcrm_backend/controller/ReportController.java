@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import site.shcrm.shcrm_backend.DTO.ReportDTO;
 import site.shcrm.shcrm_backend.Service.ReportService;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -24,7 +25,7 @@ public class ReportController {
         return "ReportSave";
     }
     @PostMapping("/reportsave")
-    public String save(@ModelAttribute ReportDTO reportDTO){
+    public String save(@ModelAttribute ReportDTO reportDTO) throws IOException {
         System.out.println("reportDTO = " + reportDTO);
         reportService.save(reportDTO);
 
@@ -42,5 +43,23 @@ public class ReportController {
         ReportDTO reportDTO = reportService.findById(no);
         model.addAttribute("report",reportDTO);
         return "ReportDetail";
+    }
+    @GetMapping("/reportupdate/{no}")
+    public String updateForm(@PathVariable long no,Model model){
+        ReportDTO reportDTO = reportService.findById(no);
+        model.addAttribute("reportUpdate",reportDTO);
+        return "ReportUpdate";
+    }
+    @PostMapping("/reportupdate")
+    public String update(@ModelAttribute ReportDTO reportDTO, Model model){
+        ReportDTO report = reportService.update(reportDTO);
+        model.addAttribute("report",report);
+        return "ReportDetail";
+    }
+
+    @GetMapping("/reportdelete/{no}")
+    public String delete(@PathVariable long no){
+        reportService.delete(no);
+        return "redirect:/reporthome";
     }
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>update</title>
+</head>
+<body>
+<form action="/reportupdate" method="post" name="updateForm">
+    <input type="hidden" name="no" th:value="${reportUpdate.no}">
+    writer: <input type="text" name="reportWriter" th:value="${reportUpdate.reportWriter}" readonly> <br>
+    title: <input type="text" name="reportTitle" th:value="${reportUpdate.reportTitle}"> <br>
+    contents: <textarea name="reportContents" cols="30" rows="10" th:text="${reportUpdate.reportContents}"></textarea> <br>
+    <input type="hidden" name="reportHits" th:value="${reportUpdate.reportHits}">
+    <input type="button" value="글수정" onclick="reportUpdate()">
+</form>
+<script th:inline="javascript">
+    const reportUpdate = () => {
+        document.updateForm.submit();
+    }
+
+</script
+</body>
