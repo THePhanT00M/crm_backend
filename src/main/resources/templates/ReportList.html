@@ -15,7 +15,7 @@
         <th>hits</th>
     </tr>
     <tr th:each="report: ${reportlist}">
-        <td th:text="${report.id}"></td>
+        <td th:text="${report.username}"></td>
         <td><a th:href="@{|/reportdetail/${report.no}|}" th:text="${report.reportTitle}"></a></td>
         <td><a th:href="@{/reportdetail/${report.no}}" th:text="${report.reportTitle}"></a></td>
         <td th:text="${report.reportWriter}"></td>

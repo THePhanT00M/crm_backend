@@ -22,7 +22,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final ReportFileRepository reportFileRepository;
 
-    public void save(ReportDTO reportDTO) throws IOException {
+    public ReportDTO save(ReportDTO reportDTO) throws IOException {
         if (reportDTO.getReportFile().isEmpty()) {
             ReportEntity reportEntity = ReportEntity.toSaveEntity(reportDTO);
             reportRepository.save(reportEntity);
@@ -40,6 +40,7 @@ public class ReportService {
             }
 
         }
+        return reportDTO;
     }
 
     @Transactional

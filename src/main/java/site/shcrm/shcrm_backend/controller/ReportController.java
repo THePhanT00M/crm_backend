@@ -1,7 +1,7 @@
 package site.shcrm.shcrm_backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import site.shcrm.shcrm_backend.DTO.ReportDTO;
@@ -10,56 +10,49 @@ import site.shcrm.shcrm_backend.Service.ReportService;
 import java.io.IOException;
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/report")
 public class ReportController {
 
     private final ReportService reportService;
-    @GetMapping("/reporthome")
-    public String ReportHome(){
-        return "ReportHome";
-    }
 
-    @GetMapping("/reportsave")
-    public String ReportSave(){
-        return "ReportSave";
+    @PostMapping("/save")
+    public ResponseEntity<String> save(@RequestBody ReportDTO reportDTO) throws IOException {
+        ReportDTO save = reportService.save(reportDTO);
+        return ResponseEntity.ok("save");
     }
-    @PostMapping("/reportsave")
-    public String save(@ModelAttribute ReportDTO reportDTO) throws IOException {
-        System.out.println("reportDTO = " + reportDTO);
-        reportService.save(reportDTO);
-
-        return "ReportHome";
-    }
-    @GetMapping("/reportlist")
-    public String findALL(Model model){
+    @GetMapping("/list")
+    public ResponseEntity<List<ReportDTO>> findALL(Model model){
         List<ReportDTO> reportDTOList = reportService.findAll();
-        model.addAttribute("reportlist",reportDTOList);
-        return "ReportList";
+        return ResponseEntity.ok(reportDTOList);
     }
-    @GetMapping("/reportdetail/{no}")
-    public String findById(@PathVariable Long no,Model model){
+
+    @PostMapping("/detail/{no}")
+    public ResponseEntity<ReportDTO> findById(@PathVariable Long no){
         reportService.updateHits(no);
         ReportDTO reportDTO = reportService.findById(no);
-        model.addAttribute("report",reportDTO);
-        return "ReportDetail";
+        if (reportDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reportDTO);
     }
-    @GetMapping("/reportupdate/{no}")
+    @GetMapping("/update/{no}")
     public String updateForm(@PathVariable long no,Model model){
         ReportDTO reportDTO = reportService.findById(no);
         model.addAttribute("reportUpdate",reportDTO);
         return "ReportUpdate";
     }
-    @PostMapping("/reportupdate")
+    @PostMapping("/update")
     public String update(@ModelAttribute ReportDTO reportDTO, Model model){
         ReportDTO report = reportService.update(reportDTO);
         model.addAttribute("report",report);
         return "ReportDetail";
     }
 
-    @GetMapping("/reportdelete/{no}")
+    @GetMapping("/delete/{no}")
     public String delete(@PathVariable long no){
         reportService.delete(no);
-        return "redirect:/reporthome";
+        return "redirect:/report/home";
     }
 }

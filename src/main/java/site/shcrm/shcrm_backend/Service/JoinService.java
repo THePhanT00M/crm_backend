@@ -21,7 +21,7 @@ public class JoinService {
 
 
         //db에 이미 동일한 username을 가진 회원이 존재하는지?
-        boolean isUser = userRepository.existsById(joinDTO.getId());
+        boolean isUser = userRepository.existsByUsername(joinDTO.getUsername());
         if (isUser) {
             return;
         }
@@ -29,9 +29,16 @@ public class JoinService {
 
         UserEntity data = new UserEntity();
 
-        data.setId(joinDTO.getId());
+        data.setUsername(joinDTO.getUsername());
         data.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
-        data.setRole("ROLE_admin");
+        data.setEmail(joinDTO.getEmail());
+        data.setDepartment(joinDTO.getDepartment());
+        if (joinDTO.getRole()==1){
+            data.setRole("ROLE_admin");
+        }
+        else if (joinDTO.getRole()==0){
+            data.setRole("ROLE_user");
+        }
 
 
         userRepository.save(data);

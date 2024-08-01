@@ -20,7 +20,7 @@ public class ReportEntity extends TimeEntity{
     private Long no;
 
     @Column
-    private String id;
+    private String username;
 
     @Column(length = 20, nullable = false)
     private String reportWriter;

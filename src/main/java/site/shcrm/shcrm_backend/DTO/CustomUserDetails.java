@@ -41,7 +41,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userEntity.getId();
+        return userEntity.getUsername();
     }
 
 
@@ -64,4 +64,8 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getDepartment() {return userEntity.getDepartment();}
+
+    public Object getEmail() {return userEntity.getEmail();}
 }

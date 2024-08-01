@@ -18,7 +18,7 @@ public class ReportDTO {
 
     private Long no;
 
-    private String id;
+    private String username;
     private String reportWriter;
     private String reportTitle;
     private String reportContents;
@@ -29,11 +29,11 @@ public class ReportDTO {
     private List<MultipartFile> reportFile; // save.html -> Controller 파일 담는 용도
     private List<String> originalFileName; // 원본 파일 이름
     private List<String> storedFileName; // 서버 저장용 파일 이름
-    private int FileAttached; // 파일 첨부 여부(첨부 1, 미첨부 0)
+    private int fileAttached; // 파일 첨부 여부(첨부 1, 미첨부 0)
 
     public static ReportDTO toreportDTO(ReportEntity reportEntity) {
         ReportDTO reportDTO = new ReportDTO();
-        reportDTO.setId(reportEntity.getId());
+        reportDTO.setUsername(reportEntity.getUsername());
         reportDTO.setNo(reportEntity.getNo());
         reportDTO.setReportWriter(reportEntity.getReportWriter());
         reportDTO.setReportTitle(reportEntity.getReportTitle());
@@ -42,11 +42,11 @@ public class ReportDTO {
         reportDTO.setReportCreatedTime(reportEntity.getCreatedTime());
         reportDTO.setReportHits(reportEntity.getReportHits());
         if (reportEntity.getFileAttached() == 0) {
-            reportDTO.setFileAttached(reportEntity.getFileAttached()); // 0
+            reportDTO.setFileAttached(0); // 0
         } else {
             List<String> originalFileNameList = new ArrayList<>();
             List<String> storedFileNameList = new ArrayList<>();
-            reportDTO.setFileAttached(reportDTO.getFileAttached()); // 1
+            reportDTO.setFileAttached(1); // 1
             for(ReportFileEntity reportFileEntity: reportEntity.getReportFileEntityList()) {
                originalFileNameList.add(reportFileEntity.getOriginalFileName());
                storedFileNameList.add(reportFileEntity.getStoredFileName());
