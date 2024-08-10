@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @Table(name = "report_file_table")
 public class ReportFileEntity extends TimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long no;
+    private Long reportFileNo;
 
     @Column
     private String originalFileName;

@@ -10,7 +10,5 @@ import site.shcrm.shcrm_backend.Entity.UserEntity;
 
 
 public interface ReportRepository extends JpaRepository <ReportEntity,Long>{
-    @Modifying
-    @Query(value = "update ReportEntity r set r.reportHits=r.reportHits+1 where r.no=:no")
-    void updateHits(@Param("no") Long no);
+
 }

@@ -1,7 +1,6 @@
 package site.shcrm.shcrm_backend.config;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import site.shcrm.shcrm_backend.JWT.JWTFilter;
 import site.shcrm.shcrm_backend.JWT.JWTUtil;
 import site.shcrm.shcrm_backend.JWT.LoginFilter;
-import site.shcrm.shcrm_backend.Service.CustomUserDetailsService;
 
 import java.util.Collections;
 
@@ -29,83 +27,65 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
 
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-        this.jwtUtil=jwtUtil;
+        this.jwtUtil = jwtUtil;
         this.authenticationConfiguration = authenticationConfiguration;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-
         return configuration.getAuthenticationManager();
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
                         CorsConfiguration configuration = new CorsConfiguration();
-
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
                         return configuration;
                     }
-                })));
+                }));
 
         http
-                .authorizeHttpRequests((auth) -> auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin").hasRole("admin") // /admin 경로는 admin 역할이 있는 사용자만 접근 가능
+                        .requestMatchers("/files/download/**").permitAll() // 이미지 파일 URL은 인증 없이 접근 가능
                         .anyRequest().permitAll() // 나머지 모든 요청은 permitAll()
                 );
 
         http
-                .formLogin((auth) -> auth.loginPage("/login")
-                        .loginProcessingUrl("/loginProc")
-                        .permitAll()
-                );
-
+                .formLogin(auth -> auth.disable());
 
         http
-                .formLogin((auth) -> auth.disable());
-
-
-        http
-                .httpBasic((auth) -> auth.disable());
-
+                .httpBasic(auth -> auth.disable());
 
         http
-                .csrf((auth) -> auth.disable());
+                .csrf(auth -> auth.disable());
 
-//        http
-//                .sessionManagement((auth)->auth
-//                        .maximumSessions(1)
-//                        .maxSessionsPreventsLogin(true));
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .sessionManagement((session) -> session
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
-
 }

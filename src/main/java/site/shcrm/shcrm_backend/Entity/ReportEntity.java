@@ -13,11 +13,11 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "report")
-public class ReportEntity extends TimeEntity{
+public class ReportEntity extends TimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long no;
+    private Long reportNo;
 
     @Column
     private String username;
@@ -31,43 +31,28 @@ public class ReportEntity extends TimeEntity{
     @Column(length = 500)
     private String reportContents;
 
-    @Column
-    private int reportHits;
-
-    @Column
-    private int fileAttached;
-
-    @OneToMany(mappedBy = "reportEntity", cascade = CascadeType.REMOVE, orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "reportEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReportFileEntity> reportFileEntityList = new ArrayList<>();
 
-
-    public static ReportEntity toSaveEntity(ReportDTO reportDTO){
-        ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setReportWriter(reportDTO.getReportWriter());
-        reportEntity.setReportTitle(reportDTO.getReportTitle());
-        reportEntity.setReportContents(reportDTO.getReportContents());
-        reportEntity.setReportHits(0);
-        reportEntity.setFileAttached(0);
-        return reportEntity;
-    }
+    @OneToMany(mappedBy = "reportEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntityList = new ArrayList<>();
 
     public static ReportEntity toUpdateEntity(ReportDTO reportDTO) {
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setNo(reportDTO.getNo());
+        reportEntity.setReportNo(reportDTO.getReportNo());
+        reportEntity.setUsername(reportDTO.getUsername()); // Ensure username is also updated if needed
         reportEntity.setReportWriter(reportDTO.getReportWriter());
         reportEntity.setReportTitle(reportDTO.getReportTitle());
         reportEntity.setReportContents(reportDTO.getReportContents());
-        reportEntity.setReportHits(reportDTO.getReportHits());
         return reportEntity;
     }
 
     public static ReportEntity toSaveFileEntity(ReportDTO reportDTO) {
         ReportEntity reportEntity = new ReportEntity();
+        reportEntity.setUsername(reportDTO.getUsername());
         reportEntity.setReportWriter(reportDTO.getReportWriter());
         reportEntity.setReportTitle(reportDTO.getReportTitle());
         reportEntity.setReportContents(reportDTO.getReportContents());
-        reportEntity.setReportHits(0);
-        reportEntity.setFileAttached(1);
         return reportEntity;
     }
 }
