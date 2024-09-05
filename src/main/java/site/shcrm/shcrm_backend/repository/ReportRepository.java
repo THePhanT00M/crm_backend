@@ -1,14 +1,12 @@
 package site.shcrm.shcrm_backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import site.shcrm.shcrm_backend.Entity.ReportEntity;
-import site.shcrm.shcrm_backend.Entity.UserEntity;
+import org.springframework.stereotype.Repository;
+import site.shcrm.shcrm_backend.Entity.MembersEntity;
+import site.shcrm.shcrm_backend.Entity.ReportsEntity;
 
-
-public interface ReportRepository extends JpaRepository <ReportEntity,Long>{
-
+@Repository
+public interface ReportRepository extends JpaRepository<ReportsEntity, Integer> {
+    // MembersEntity 객체를 이용한 메소드 정의
+    boolean existsByEmployeeId(MembersEntity employeeId);
 }

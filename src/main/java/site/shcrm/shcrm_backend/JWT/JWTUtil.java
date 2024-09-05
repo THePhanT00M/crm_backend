@@ -1,6 +1,7 @@
 package site.shcrm.shcrm_backend.JWT;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -20,14 +21,9 @@ public class JWTUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String getUsername(String token) {
+    public Integer getEmployeeId(String token) {
         Claims claims = parseClaims(token);
-        return claims.get("username", String.class);
-    }
-
-    public String getRole(String token) {
-        Claims claims = parseClaims(token);
-        return claims.get("role", String.class);
+        return claims.get("employee_id", Integer.class);
     }
 
     public Boolean isExpired(String token) {
@@ -36,22 +32,24 @@ public class JWTUtil {
         return expiration.before(new Date());
     }
 
-    public String createJwt(String username, String role, long expirationTimeMs) {
+    public String createJwt(Integer employeeId, long expirationTimeMs) {
         return Jwts.builder()
-                .claim("username", username)
-                .claim("role", role)
+                .claim("employee_id", employeeId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private Claims parseClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    public Claims parseClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new RuntimeException("Invalid JWT token", e);
+        }
     }
 }
-

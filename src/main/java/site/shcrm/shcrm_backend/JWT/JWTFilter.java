@@ -7,56 +7,53 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import site.shcrm.shcrm_backend.DTO.CustomUserDetails;
-import site.shcrm.shcrm_backend.Entity.UserEntity;
+import site.shcrm.shcrm_backend.Entity.MembersEntity;
+import site.shcrm.shcrm_backend.repository.MembersRepository;
 
 import java.io.IOException;
 
+@Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final MembersRepository membersRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, MembersRepository membersRepository, BCryptPasswordEncoder passwordEncoder) {
         this.jwtUtil = jwtUtil;
+        this.membersRepository = membersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Request에서 Authorization 헤더를 찾음
         String authorization = request.getHeader("Authorization");
 
-        // Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            return; // 조건이 해당되면 메소드 종료 (필수)
+            return;
         }
 
-        // Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.substring(7);
 
-        // 토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
-            filterChain.doFilter(request, response);
-            return; // 조건이 해당되면 메소드 종료 (필수)
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
-        // 토큰에서 username과 role 획득
-        String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
+        Integer employeeId = jwtUtil.getEmployeeId(token);
 
-        // userEntity를 생성하여 값 set
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
-        userEntity.setPassword("temppassword");
-        userEntity.setRole(role);
+        MembersEntity membersEntity = membersRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // UserDetails에 회원 정보 객체 담기
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+        MembersDetails membersDetails = new MembersDetails(membersEntity, passwordEncoder);
 
-        // 스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        // 세션에 사용자 등록
+        Authentication authToken = new UsernamePasswordAuthenticationToken(membersDetails, null, membersDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
