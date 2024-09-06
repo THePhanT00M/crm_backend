@@ -54,8 +54,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         UserDetails userDetails = (UserDetails) authResult.getPrincipal();
         String token = jwtUtil.createToken(userDetails.getUsername());
 
-        // 토큰을 응답에 추가
+        // 응답 JSON 객체 생성
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("employeeId", ((MembersDetails) userDetails).getMembersEntity().getEmployeeId());
+        responseBody.put("email", ((MembersDetails) userDetails).getMembersEntity().getEmail());
+
         response.setHeader("Authorization", "Bearer " + token);
+
+        // 응답 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getWriter(), responseBody);
     }
 
     @Override
