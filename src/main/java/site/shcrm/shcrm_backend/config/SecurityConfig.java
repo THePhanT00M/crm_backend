@@ -40,9 +40,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/login").permitAll()  // 로그인 엔드포인트는 모두 허용
-                        .requestMatchers("/join").permitAll()   // /join 엔드포인트 허용
-                        .anyRequest().authenticated()          // 다른 요청은 인증 필요
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(loginFilter(http));
