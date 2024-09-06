@@ -1,29 +1,26 @@
 package site.shcrm.shcrm_backend.JWT;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import site.shcrm.shcrm_backend.Entity.MembersEntity;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 public class MembersDetails implements UserDetails {
 
-    @Getter
     private final MembersEntity membersEntity;
-    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public MembersDetails(MembersEntity membersEntity, BCryptPasswordEncoder passwordEncoder) {
+    public MembersDetails(MembersEntity membersEntity) {
         this.membersEntity = membersEntity;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // 여기에 권한 정보를 추가할 수 있습니다. 예시로 빈 리스트를 반환합니다.
         return Collections.emptyList();
     }
 
@@ -34,30 +31,28 @@ public class MembersDetails implements UserDetails {
 
     @Override
     public String getUsername() {
+        // 회원 ID를 사용자 이름으로 사용합니다.
         return String.valueOf(membersEntity.getEmployeeId());
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return true; // 계정 만료 여부 설정
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; // 계정 잠금 여부 설정
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return true; // 자격 증명 만료 여부 설정
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return true; // 계정 활성화 여부 설정
     }
 
-    public boolean checkPassword(String rawPassword) {
-        return passwordEncoder.matches(rawPassword, getPassword());
-    }
 }

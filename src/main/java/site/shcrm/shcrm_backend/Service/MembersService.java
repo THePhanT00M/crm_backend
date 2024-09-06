@@ -1,5 +1,6 @@
 package site.shcrm.shcrm_backend.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,33 +14,27 @@ import site.shcrm.shcrm_backend.Entity.MembersEntity;
 import site.shcrm.shcrm_backend.JWT.MembersDetails;
 import site.shcrm.shcrm_backend.repository.MembersRepository;
 
-import javax.naming.AuthenticationException;
-
 @Service
 public class MembersService implements UserDetailsService {
 
     private final MembersRepository membersRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public MembersService(MembersRepository membersRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    public MembersService(MembersRepository membersRepository, BCryptPasswordEncoder passwordEncoder) {
         this.membersRepository = membersRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        MembersEntity membersEntity = membersRepository.findByEmployeeId(Integer.parseInt(username))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return new MembersDetails(membersEntity, (BCryptPasswordEncoder) passwordEncoder);
-    }
-
-    public Authentication authenticate(String employeeId, String rawPassword) throws AuthenticationException {
-        UserDetails userDetails = loadUserByUsername(employeeId);
-        if (!passwordEncoder.matches(rawPassword, userDetails.getPassword())) {
-            throw new BadCredentialsException("Invalid credentials");
+        try {
+            Integer employeeId = Integer.parseInt(username);
+            MembersEntity membersEntity = membersRepository.findByEmployeeId(employeeId)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with employeeId: " + employeeId));
+            return new MembersDetails(membersEntity);
+        } catch (NumberFormatException e) {
+            throw new UsernameNotFoundException("Invalid employeeId format: " + username, e);
         }
-
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
